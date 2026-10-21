@@ -46,7 +46,7 @@ Visitante, Participante, Organizador de torneo y Administrador.
 **Postcondición:** integridad del contenido verificada respecto de la clave pública.
 
 ## Diagrama resumido
-`mermaid
+```mermaid
 flowchart LR
   Visitante --> Publico[Consultar torneos públicos]
   Visitante --> Registro[Registrarse e iniciar sesión]
@@ -58,7 +58,7 @@ flowchart LR
   Gestion --> BD[(MySQL)]
   Resultado --> BD
   Inscripcion --> BD
-`
+```
 
 ## Trazabilidad con pruebas
 Vincular UC-01 a M-01/M-06, UC-02 a M-02/M-03/M-04, UC-03 a pruebas de duplicado y estado de torneo, UC-04/UC-05 a pruebas del motor y permisos, y UC-06 a FirmaDigitalTest. Los casos que requieren interfaz deben probarse manualmente en la versión desplegada.

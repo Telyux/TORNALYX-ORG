@@ -328,3 +328,30 @@ Empresa creada para el desarrollo del proyecto de egreso de Bachillerato Tecnol�
 Proyecto académico desarrollado con fines educativos.
 
 © 2026 Telyux Software Development - Todos los derechos reservados.
+
+
+## Desarrollo, pruebas y seguridad (tercera entrega)
+
+El entorno local carga datos ficticios al inicializar un volumen MySQL vacío. La base se publica solo en localhost, puerto 3307.
+
+    docker compose up --build -d
+    composer install
+    composer test
+    composer lint
+
+Para reinicializar la base local y cargar el seed desde cero (acción destructiva):
+
+    docker compose down -v
+    docker compose up --build -d
+
+El dataset es exclusivamente de desarrollo y nunca debe importarse en producción. La carga inicial de MySQL ocurre solo cuando el volumen está vacío.
+
+Documentación añadida:
+- docs/PLAN-TESTING.md — pruebas automatizadas y manuales.
+- docs/PLAN-SEGURIDAD-OWASP.md — controles y procedimiento de revisión web.
+- docs/POLITICA-SEGURIDAD-SERVIDOR.md — firewalld, Fail2ban, ClamAV y HTTPS en AlmaLinux.
+- docs/MANUAL-USUARIO.md y docs/MANUAL-ADMINISTRADOR.md — uso y operación.
+- monitoring/ — plantilla opcional de Prometheus/Grafana. Copiar .env.monitoring.example a .env.monitoring y reemplazar las credenciales antes de iniciar.
+- scripts/firma-documento.php — firma y verificación RSA/SHA-256. La clave privada debe guardarse fuera del repositorio.
+
+La política de seguridad describe procedimientos que aún deben verificarse en el servidor real; añadir los archivos al repositorio no demuestra que los servicios estén activos.

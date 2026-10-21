@@ -18,7 +18,7 @@ final class FirmaDigital
         if($key===false) throw new RuntimeException('No se pudo cargar la clave pública de verificación.');
         $signature=base64_decode($firmaBase64,true);
         if($signature===false){return false;}
-        $result=openssl_verify($contenido,$signature,$key,OPENSSL_ALGO_SHA256); openssl_free_key($key);
+        $result=openssl_verify($contenido,$signature,$key,OPENSSL_ALGO_SHA256); 
         if($result===-1) throw new RuntimeException('OpenSSL no pudo verificar la firma.');
         return $result===1;
     }

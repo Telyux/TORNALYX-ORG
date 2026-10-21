@@ -30,15 +30,16 @@ services:
     ports:
       # Expuesto en el host por 3307 (para conectar con un cliente/GUI)
       # y así no chocar con un MySQL local que ya use el 3306.
-      - "3307:3306"
+      - "127.0.0.1:3307:3306"
     volumes:
       # Persistencia de datos entre reinicios (borrar con `down -v`).
       - tornalyx_db_data:/var/lib/mysql
       # Scripts de inicialización: MySQL los ejecuta en orden alfabético
       # SOLO la primera vez (cuando el volumen está vacío).
-      # Se carga únicamente el schema (sin datos de prueba). Las migraciones de
-      # SGDM/backend/database/migrations/ ya están plegadas en schema.sql.
+      # MySQL ejecuta ambos scripts solo al crear un volumen vacío.
+      # El seed contiene cuentas y registros ficticios exclusivamente locales.
       - ./SGDM/backend/database/migrations/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./SGDM/backend/database/seed-demo.sql:/docker-entrypoint-initdb.d/02-seed-demo.sql:ro
     healthcheck:
       # `app` espera a que MySQL responda antes de arrancar.
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]

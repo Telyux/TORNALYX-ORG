@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+!.env.monitoring.example
+.phpunit.cache/
 *.local.php
 SGDM/backend/database/.secrets/
 

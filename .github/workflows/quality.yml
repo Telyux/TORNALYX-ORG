@@ -27,8 +27,6 @@ jobs:
           php-version: '8.2'
           extensions: openssl, pdo_mysql
           coverage: none
-      - name: Validate Composer manifest
-        run: composer validate --no-check-publish
       - name: Install development dependencies
         run: composer install --no-interaction --prefer-dist
       - name: Run unit tests

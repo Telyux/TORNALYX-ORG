@@ -1,5 +1,5 @@
 -- Local development fixture. Loaded only on first initialization of a fresh Docker DB volume.
--- 100 disabled demo users and at least 50 rows in each business table.
+-- 100 non-authenticating demo users and at least 50 rows in each business table.
 -- Sessions and OTPs are expired. Never load this dataset into production.
 USE tornalyx_db;
 DELIMITER $$

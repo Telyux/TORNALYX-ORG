@@ -2,7 +2,7 @@
 
 **Estado:** arquitectura de referencia; ajustar a la topología real del servidor antes de presentarla como desplegada.
 
-`mermaid
+```mermaid
 flowchart TB
   U[Usuarios de Internet] -->|HTTPS 443| TLS[Proxy / Apache con certificado válido]
   U -. HTTP 80 redirige a HTTPS .-> TLS
@@ -13,7 +13,7 @@ flowchart TB
   HOST --> MON[Prometheus / Grafana restringidos a localhost o proxy autenticado]
   HOST --> AV[ClamAV: análisis y logs]
   HOST --> BK[Backups externos cifrados]
-`
+```
 
 ## Controles
 - No exponer el puerto MySQL a Internet.

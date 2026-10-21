@@ -8,7 +8,7 @@ final class FirmaDigital
     {
         $key=openssl_pkey_get_private($clavePrivadaPem,$passphrase ?? '');
         if($key===false) throw new RuntimeException('No se pudo cargar la clave privada de firma.');
-        $signature=''; $ok=openssl_sign($contenido,$signature,$key,OPENSSL_ALGO_SHA256); openssl_free_key($key);
+        $signature=''; $ok=openssl_sign($contenido,$signature,$key,OPENSSL_ALGO_SHA256); 
         if(!$ok) throw new RuntimeException('OpenSSL no pudo generar la firma digital.');
         return base64_encode($signature);
     }
@@ -17,7 +17,7 @@ final class FirmaDigital
         $key=openssl_pkey_get_public($clavePublicaPem);
         if($key===false) throw new RuntimeException('No se pudo cargar la clave pública de verificación.');
         $signature=base64_decode($firmaBase64,true);
-        if($signature===false){openssl_free_key($key);return false;}
+        if($signature===false){return false;}
         $result=openssl_verify($contenido,$signature,$key,OPENSSL_ALGO_SHA256); openssl_free_key($key);
         if($result===-1) throw new RuntimeException('OpenSSL no pudo verificar la firma.');
         return $result===1;

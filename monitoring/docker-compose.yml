@@ -1,0 +1,35 @@
+# Optional host monitoring. Copy .env.monitoring.example to .env.monitoring first.
+# All UI ports bind to localhost; use an authenticated TLS proxy for remote access.
+services:
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.retention.time=15d"]
+    ports: ["127.0.0.1:9090:9090"]
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on: [node-exporter, mysqld-exporter]
+  grafana:
+    image: grafana/grafana:11.4.0
+    restart: unless-stopped
+    env_file: .env.monitoring
+    ports: ["127.0.0.1:3000:3000"]
+    volumes: [grafana_data:/var/lib/grafana]
+    depends_on: [prometheus]
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    restart: unless-stopped
+    command: ["--path.rootfs=/host"]
+    pid: host
+    ports: ["127.0.0.1:9100:9100"]
+    volumes: ["/:/host:ro,rslave"]
+  mysqld-exporter:
+    image: prom/mysqld-exporter:v0.16.0
+    restart: unless-stopped
+    env_file: .env.monitoring
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["127.0.0.1:9104:9104"]
+volumes:
+  prometheus_data:
+  grafana_data:

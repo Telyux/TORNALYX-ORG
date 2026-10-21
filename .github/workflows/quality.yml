@@ -1,0 +1,53 @@
+name: Quality checks
+on:
+  push:
+    branches: [main, entrega-3-mejoras-auditoria]
+  pull_request:
+    branches: [main]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  php-tests-and-demo-database:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: openssl, pdo_mysql
+          coverage: none
+      - name: Install development dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Run unit tests
+        run: composer test
+      - name: Check PHP syntax
+        run: composer lint
+      - name: Load database schema and demo data
+        run: |
+          set -euo pipefail
+          mysql --host=127.0.0.1 --user=root --password=root < SGDM/backend/database/migrations/schema.sql
+          mysql --host=127.0.0.1 --user=root --password=root < SGDM/backend/database/seed-demo.sql
+      - name: Assert minimum demo rows per table
+        run: |
+          set -euo pipefail
+          for table in usuarios torneos equipos inscripciones rondas partidos resultados posiciones sesiones login_otps doc_acceso asistencias avisos avisos_leidos doc_otps; do
+            count="$(mysql --host=127.0.0.1 --user=root --password=root --batch --skip-column-names -e "SELECT COUNT(*) FROM tornalyx_db.$table")"
+            minimum=50
+            if [ "$table" = "usuarios" ]; then minimum=100; fi
+            echo "$table: $count rows (minimum $minimum)"
+            test "$count" -ge "$minimum"
+          done

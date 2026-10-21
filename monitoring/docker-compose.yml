@@ -28,6 +28,7 @@ services:
     image: prom/mysqld-exporter:v0.16.0
     restart: unless-stopped
     env_file: .env.monitoring
+    extra_hosts: ["host.docker.internal:host-gateway"]
     ports: ["127.0.0.1:9104:9104"]
 volumes:
   prometheus_data:
